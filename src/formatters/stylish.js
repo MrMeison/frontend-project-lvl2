@@ -24,18 +24,30 @@ const formatLine = (key, value, separator, depth) => {
 };
 
 const stylishFormatter = (meta, depth = 1) => {
-  const lines = meta.map((node) => {
+  const lines = [];
+
+  for (let i = 0; i < meta.length; i += 1) {
+    const node = meta[i];
+
     switch (node.type) {
       case TYPES.ADDED:
-        return formatLine(node.key, node.value, CHANGE_SEPARATORS.ADDED, depth);
+        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.ADDED, depth));
+        break;
       case TYPES.DELETED:
-        return formatLine(node.key, node.value, CHANGE_SEPARATORS.DELETED, depth);
+        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.DELETED, depth));
+        break;
+      case TYPES.CHANGED:
+        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.DELETED, depth));
+        lines.push(formatLine(node.key, node.newValue, CHANGE_SEPARATORS.ADDED, depth));
+        break;
       default:
-        return node.children === undefined
-          ? formatLine(node.key, node.value, CHANGE_SEPARATORS.NOT_MODIFIED, depth)
-          : `${TAB.repeat(depth)}${CHANGE_SEPARATORS.ADDED}${node.key}: ${stylishFormatter(node.children, depth + 1)}`;
+        lines.push(
+          node.children === undefined
+            ? formatLine(node.key, node.value, CHANGE_SEPARATORS.NOT_MODIFIED, depth)
+            : `${TAB.repeat(depth)}${CHANGE_SEPARATORS.NOT_MODIFIED}${node.key}: ${stylishFormatter(node.children, depth + 1)}`,
+        );
     }
-  });
+  }
   return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${CHANGE_SEPARATORS.NOT_MODIFIED.repeat(depth ? 1 : 0)}}`;
 };
 

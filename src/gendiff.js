@@ -20,6 +20,11 @@ const getAddedMeta = (key, value) => createMeta(key, value, TYPES.ADDED);
 
 const getDeletedMeta = (key, value) => createMeta(key, value, TYPES.DELETED);
 
+const getChangedMeta = (key, value, newValue) => ({
+  ...createMeta(key, value, TYPES.CHANGED),
+  newValue,
+});
+
 const comparer = (obj1, obj2) => {
   const result = [];
 
@@ -37,10 +42,7 @@ const comparer = (obj1, obj2) => {
           children: comparer(obj1[key], obj2[key]),
         });
       } else {
-        result.push(
-          getDeletedMeta(key, obj1[key]),
-          getAddedMeta(key, obj2[key]),
-        );
+        result.push(getChangedMeta(key, obj1[key], obj2[key]));
       }
     } else if (!has(obj1, key)) {
       result.push(getAddedMeta(key, obj2[key]));
@@ -82,6 +84,7 @@ const gendiff = (pathToFile1, pathToFile2, format = 'stylish') => {
     case 'json':
       return diffMeta;
     case 'plain':
+      return formatters.plain(diffMeta);
     default:
       return formatters.stylish(diffMeta);
   }
