@@ -1,15 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 import lodash from 'lodash';
-import jsonParser from './parsers/json.js';
-import ymlParser from './parsers/yml.js';
-import iniParser from './parsers/ini.js';
+import TYPES from './types.js';
+import parsers from './parsers/index.js';
+
+import formatters from './formatters/index.js';
 
 const { has, union } = lodash;
-
-const NOT_MODIFIED = 'not modified';
-const ADDED = 'added';
-const DELETED = 'deleted';
 
 const createMeta = (key, value, type) => ({
   value,
@@ -17,11 +14,11 @@ const createMeta = (key, value, type) => ({
   type,
 });
 
-const getNotModifiedMeta = (key, value) => createMeta(key, value, NOT_MODIFIED);
+const getNotModifiedMeta = (key, value) => createMeta(key, value, TYPES.NOT_MODIFIED);
 
-const getAddedMeta = (key, value) => createMeta(key, value, ADDED);
+const getAddedMeta = (key, value) => createMeta(key, value, TYPES.ADDED);
 
-const getDeletedMeta = (key, value) => createMeta(key, value, DELETED);
+const getDeletedMeta = (key, value) => createMeta(key, value, TYPES.DELETED);
 
 const comparer = (obj1, obj2) => {
   const result = [];
@@ -49,27 +46,9 @@ const comparer = (obj1, obj2) => {
   return result;
 };
 
-const prettyFormatter = (meta) => {
-  const lines = meta.map((node) => {
-    switch (node.type) {
-      case ADDED:
-        return `\t+ ${node.key}: ${node.value}`;
-      case DELETED:
-        return `\t- ${node.key}: ${node.value}`;
-      default:
-        return `\t  ${node.key}: ${node.value}`;
-    }
-  });
-  return `
-  {
-    ${lines.join('\n')}
-  }
-  `;
-};
-
 const readFile = (pathToFile) => fs.readFileSync(path.resolve(pathToFile), 'utf-8');
 
-const gendiff = (pathToFile1, pathToFile2) => {
+const gendiff = (pathToFile1, pathToFile2, format = 'stylish') => {
   const extension = path.extname(pathToFile1);
   const fileContent1 = readFile(pathToFile1);
   const fileContent2 = readFile(pathToFile2);
@@ -79,19 +58,27 @@ const gendiff = (pathToFile1, pathToFile2) => {
 
   switch (extension) {
     case '.yml':
-      parsedContent1 = ymlParser(fileContent1);
-      parsedContent2 = ymlParser(fileContent2);
+      parsedContent1 = parsers.yml(fileContent1);
+      parsedContent2 = parsers.yml(fileContent2);
       break;
     case '.ini':
-      parsedContent1 = iniParser(fileContent1);
-      parsedContent2 = iniParser(fileContent2);
+      parsedContent1 = parsers.ini(fileContent1);
+      parsedContent2 = parsers.ini(fileContent2);
       break;
     default:
-      parsedContent1 = jsonParser(fileContent1);
-      parsedContent2 = jsonParser(fileContent2);
+      parsedContent1 = parsers.json(fileContent1);
+      parsedContent2 = parsers.json(fileContent2);
   }
 
-  return prettyFormatter(comparer(parsedContent1, parsedContent2));
+  const diffMeta = comparer(parsedContent1, parsedContent2);
+
+  switch (format) {
+    case 'json':
+      return diffMeta;
+    case 'plain':
+    default:
+      return formatters.stylish(diffMeta);
+  }
 };
 
 export default gendiff;
