@@ -1,7 +1,13 @@
 {
     "name": "Vasya",
     "surname": "Petrov",
-    "chiildren": ["Masha", "Katya"],
-    "age": 26,
-    "sex": "male"
+    "options": {
+        "age": 26,
+        "sex": "male",
+        "status": "married"
+    },
+    "deepObj": {
+        "value": 1,
+        "options": "Boom!"
+    }
 }

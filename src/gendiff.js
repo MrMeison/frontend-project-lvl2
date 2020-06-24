@@ -6,7 +6,7 @@ import parsers from './parsers/index.js';
 
 import formatters from './formatters/index.js';
 
-const { has, union } = lodash;
+const { has, union, isObject } = lodash;
 
 const createMeta = (key, value, type) => ({
   value,
@@ -30,6 +30,12 @@ const comparer = (obj1, obj2) => {
     if (has(obj1, key) && has(obj2, key)) {
       if (obj1[key] === obj2[key]) {
         result.push(getNotModifiedMeta(key, obj1[key]));
+        // если значения это объекты, то рекурсивно проходим вложенные объекты
+      } else if (isObject(obj1[key]) && isObject(obj2[key])) {
+        result.push({
+          ...getNotModifiedMeta(key),
+          children: comparer(obj1[key], obj2[key]),
+        });
       } else {
         result.push(
           getDeletedMeta(key, obj1[key]),

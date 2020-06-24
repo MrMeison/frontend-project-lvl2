@@ -2,6 +2,19 @@
 {
     "name": "Petya",
     "surname": "Petrov",
-    "age": 16,
-    "sex": "male"
+    "options": {
+        "age": 16,
+        "sex": "male"
+    },
+    "deepObj": {
+        "value": 1,
+        "options": {
+            "deepObj": {
+                "value": 3,
+                "deepObj": {
+                    "value": 3
+                }
+            }
+        }
+    }
 }
