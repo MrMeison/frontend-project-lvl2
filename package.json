@@ -1,0 +1,43 @@
+{
+  "name": "gendiff",
+  "version": "0.0.1",
+  "description": "Differ",
+  "bin": {
+    "hexlet": "bin/gendiff.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "test": "npx -n --experimental-vm-modules jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrMeison/frontend-project-lvl2.git"
+  },
+  "author": "Konstantin Mamaev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrMeison/frontend-project-lvl2/issues"
+  },
+  "type": "module",
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  },
+  "homepage": "https://github.com/MrMeison/frontend-project-lvl2#readme",
+  "dependencies": {
+    "@jest/globals": "^26.0.1",
+    "commander": "^5.1.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "debug": "^4.1.1",
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.10.0",
+    "jest": "^26.0.1",
+    "jest-cli": "^26.0.1"
+  }
+}
