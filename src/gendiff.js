@@ -1,6 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import lodash from 'lodash';
+import jsonParser from './parsers/json.js';
+import ymlParser from './parsers/yml.js';
+import iniParser from './parsers/ini.js';
 
 const { has, union } = lodash;
 
@@ -64,11 +67,31 @@ const prettyFormatter = (meta) => {
   `;
 };
 
-const gendiff = (pathToFile1, pathToFile2) => {
-  const fileContent1 = JSON.parse(fs.readFileSync(path.resolve(pathToFile1)));
-  const fileContent2 = JSON.parse(fs.readFileSync(path.resolve(pathToFile2)));
+const readFile = (pathToFile) => fs.readFileSync(path.resolve(pathToFile), 'utf-8');
 
-  return prettyFormatter(comparer(fileContent1, fileContent2));
+const gendiff = (pathToFile1, pathToFile2) => {
+  const extension = path.extname(pathToFile1);
+  const fileContent1 = readFile(pathToFile1);
+  const fileContent2 = readFile(pathToFile2);
+
+  let parsedContent1;
+  let parsedContent2;
+
+  switch (extension) {
+    case '.yml':
+      parsedContent1 = ymlParser(fileContent1);
+      parsedContent2 = ymlParser(fileContent2);
+      break;
+    case '.ini':
+      parsedContent1 = iniParser(fileContent1);
+      parsedContent2 = iniParser(fileContent2);
+      break;
+    default:
+      parsedContent1 = jsonParser(fileContent1);
+      parsedContent2 = jsonParser(fileContent2);
+  }
+
+  return prettyFormatter(comparer(parsedContent1, parsedContent2));
 };
 
 export default gendiff;
