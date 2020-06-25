@@ -48,7 +48,7 @@ const stylishFormatter = (meta, depth = 1) => {
         );
     }
   }
-  return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${CHANGE_SEPARATORS.NOT_MODIFIED.repeat(depth ? 1 : 0)}}`;
+  return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${CHANGE_SEPARATORS.NOT_MODIFIED.repeat(depth - 1 ? 1 : 0)}}`;
 };
 
 export default stylishFormatter;
