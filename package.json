@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Differ",
   "bin": {
-    "hexlet": "bin/gendiff.js"
+    "gendiff": "bin/gendiff.js"
   },
   "engines": {
     "node": ">=14"
