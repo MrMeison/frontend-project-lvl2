@@ -11,17 +11,12 @@ const formatValue = (value) => {
   return String(value);
 };
 
-const getChangeMessage = (key, value, newValue, keyPrefix) => {
-  return `Property '${keyPrefix}${key}' was changed from ${formatValue(value)} to ${formatValue(newValue)}`;
-};
+const getChangeMessage = (key, value, newValue, keyPrefix) => `Property '${keyPrefix}${key}' was changed from ${formatValue(value)} to ${formatValue(newValue)}`;
 
-const getAddMessage = (key, value, keyPrefix) => {
-  return `Property '${keyPrefix}${key}' was added with value: ${formatValue(value)}`;
-};
 
-const getDeleteMessage = (key, keyPrefix) => {
-  return `Property '${keyPrefix}${key}' was deleted`;
-};
+const getAddMessage = (key, value, keyPrefix) => `Property '${keyPrefix}${key}' was added with value: ${formatValue(value)}`;
+
+const getDeleteMessage = (key, keyPrefix) => `Property '${keyPrefix}${key}' was deleted`;
 
 const buildLines = (meta, keyPrefix = '') => {
   const lines = [];
