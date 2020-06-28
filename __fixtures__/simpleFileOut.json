@@ -1,0 +1,29 @@
+[
+    {
+        "value": "Petya",
+        "key": "name",
+        "type": "changed",
+        "newValue": "Vasya"
+    },
+    {
+        "value": "Petrov",
+        "key": "surname",
+        "type": "not modified"
+    },
+    {
+        "value": 16,
+        "key": "age",
+        "type": "changed",
+        "newValue": 26
+    },
+    {
+        "value": "male",
+        "key": "sex",
+        "type": "not modified"
+    },
+    {
+        "value": "married",
+        "key": "status",
+        "type": "added"
+    }
+]
