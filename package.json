@@ -2,6 +2,7 @@
   "name": "gendiff",
   "version": "0.0.1",
   "description": "Differ",
+  "main": "index.js",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },
