@@ -19,27 +19,21 @@ const getAddMessage = (key, value, keyPrefix) => `Property '${keyPrefix}${key}' 
 const getDeleteMessage = (key, keyPrefix) => `Property '${keyPrefix}${key}' was deleted`;
 
 const buildLines = (meta, keyPrefix = '') => {
-  const lines = [];
-
-  for (let i = 0; i < meta.length; i += 1) {
-    const node = meta[i];
-
+  const lines = meta.flatMap((node) => {
     switch (node.type) {
       case types.added:
-        lines.push(getAddMessage(node.key, node.value, keyPrefix));
-        break;
+        return getAddMessage(node.key, node.value, keyPrefix);
       case types.deleted:
-        lines.push(getDeleteMessage(node.key, keyPrefix));
-        break;
+        return getDeleteMessage(node.key, keyPrefix);
       case types.changed:
-        lines.push(getChangeMessage(node.key, node.value, node.newValue, keyPrefix));
-        break;
+        return getChangeMessage(node.key, node.value, node.newValue, keyPrefix);
       default:
         if (node.children !== undefined) {
-          lines.push(...buildLines(node.children, `${node.key}.`));
+          return buildLines(node.children, `${node.key}.`);
         }
+        return [];
     }
-  }
+  });
   return lines;
 };
 

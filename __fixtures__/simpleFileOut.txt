@@ -1,9 +1,9 @@
 {
-	 - name: Petya
-	 + name: Vasya
-	   surname: Petrov
-	 - age: 16
-	 + age: 26
-	   sex: male
-	 + status: married
+  - name: Petya
+  + name: Vasya
+    surname: Petrov
+  - age: 16
+  + age: 26
+    sex: male
+  + status: married
 }

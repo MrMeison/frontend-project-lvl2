@@ -3,11 +3,11 @@ import types from '../types.js';
 
 const { isObject } = lodash;
 
-const TAB = '\t';
+const TAB = '  ';
 const CHANGE_SEPARATORS = {
-  added: ' + ',
-  deleted: ' - ',
-  notModified: '   ',
+  added: '+ ',
+  deleted: '- ',
+  notModified: '  ',
 };
 
 const formatLine = (key, value, separator, depth) => {
@@ -24,31 +24,25 @@ const formatLine = (key, value, separator, depth) => {
 };
 
 const stylishFormatter = (meta, depth = 1) => {
-  const lines = [];
-
-  for (let i = 0; i < meta.length; i += 1) {
-    const node = meta[i];
-
+  const lines = meta.flatMap((node) => {
     switch (node.type) {
       case types.added:
-        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.added, depth));
-        break;
+        return formatLine(node.key, node.value, CHANGE_SEPARATORS.added, depth);
       case types.deleted:
-        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth));
-        break;
+        return formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth);
       case types.changed:
-        lines.push(formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth));
-        lines.push(formatLine(node.key, node.newValue, CHANGE_SEPARATORS.added, depth));
-        break;
+        return [
+          formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth),
+          formatLine(node.key, node.newValue, CHANGE_SEPARATORS.added, depth),
+        ];
       default:
-        lines.push(
-          node.children === undefined
-            ? formatLine(node.key, node.value, CHANGE_SEPARATORS.notModified, depth)
-            : `${TAB.repeat(depth)}${CHANGE_SEPARATORS.notModified}${node.key}: ${stylishFormatter(node.children, depth + 1)}`,
-        );
+        return node.children === undefined
+          ? formatLine(node.key, node.value, CHANGE_SEPARATORS.notModified, depth)
+          : `${TAB.repeat(depth)}${CHANGE_SEPARATORS.notModified}${node.key}: ${stylishFormatter(node.children, depth + 1)}`;
     }
-  }
-  return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${CHANGE_SEPARATORS.notModified.repeat(depth - 1 ? 1 : 0)}}`;
+  });
+
+  return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${TAB.repeat(depth - 1 ? 1 : 0)}}`;
 };
 
 export default stylishFormatter;
