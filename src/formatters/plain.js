@@ -1,5 +1,5 @@
 import lodash from 'lodash';
-import TYPES from '../types.js';
+import types from '../types.js';
 
 const { isObject } = lodash;
 
@@ -25,13 +25,13 @@ const buildLines = (meta, keyPrefix = '') => {
     const node = meta[i];
 
     switch (node.type) {
-      case TYPES.ADDED:
+      case types.added:
         lines.push(getAddMessage(node.key, node.value, keyPrefix));
         break;
-      case TYPES.DELETED:
+      case types.deleted:
         lines.push(getDeleteMessage(node.key, keyPrefix));
         break;
-      case TYPES.CHANGED:
+      case types.changed:
         lines.push(getChangeMessage(node.key, node.value, node.newValue, keyPrefix));
         break;
       default:

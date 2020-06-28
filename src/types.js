@@ -1,6 +1,6 @@
 export default {
-  NOT_MODIFIED: 'not modified',
-  ADDED: 'added',
-  DELETED: 'deleted',
-  CHANGED: 'changed',
+  notModified: 'not modified',
+  added: 'added',
+  deleted: 'deleted',
+  changed: 'changed',
 };

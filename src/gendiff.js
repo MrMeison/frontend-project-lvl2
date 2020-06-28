@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import lodash from 'lodash';
-import TYPES from './types.js';
+import types from './types.js';
 import parsers from './parsers/index.js';
 
 import formatters from './formatters/index.js';
@@ -14,14 +14,14 @@ const createMeta = (key, value, type) => ({
   type,
 });
 
-const getNotModifiedMeta = (key, value) => createMeta(key, value, TYPES.NOT_MODIFIED);
+const getNotModifiedMeta = (key, value) => createMeta(key, value, types.notModified);
 
-const getAddedMeta = (key, value) => createMeta(key, value, TYPES.ADDED);
+const getAddedMeta = (key, value) => createMeta(key, value, types.added);
 
-const getDeletedMeta = (key, value) => createMeta(key, value, TYPES.DELETED);
+const getDeletedMeta = (key, value) => createMeta(key, value, types.deleted);
 
 const getChangedMeta = (key, value, newValue) => ({
-  ...createMeta(key, value, TYPES.CHANGED),
+  ...createMeta(key, value, types.changed),
   newValue,
 });
 
