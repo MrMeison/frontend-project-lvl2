@@ -11,25 +11,24 @@ const formatValue = (value) => {
   return String(value);
 };
 
-const getChangeMessage = (key, value, newValue, keyPrefix) => `Property '${keyPrefix}${key}' was changed from ${formatValue(value)} to ${formatValue(newValue)}`;
+const getChangeMessage = (value, newValue, pathParts) => `Property '${pathParts.join('.')}' was changed from ${formatValue(value)} to ${formatValue(newValue)}`;
 
+const getAddMessage = (value, pathParts) => `Property '${pathParts.join('.')}' was added with value: ${formatValue(value)}`;
 
-const getAddMessage = (key, value, keyPrefix) => `Property '${keyPrefix}${key}' was added with value: ${formatValue(value)}`;
+const getDeleteMessage = (pathParts) => `Property '${pathParts.join('.')}' was deleted`;
 
-const getDeleteMessage = (key, keyPrefix) => `Property '${keyPrefix}${key}' was deleted`;
-
-const buildLines = (meta, keyPrefix = '') => {
+const buildLines = (meta, pathParts = []) => {
   const lines = meta.flatMap((node) => {
     switch (node.type) {
       case types.added:
-        return getAddMessage(node.key, node.value, keyPrefix);
+        return getAddMessage(node.value, [...pathParts, node.key]);
       case types.deleted:
-        return getDeleteMessage(node.key, keyPrefix);
+        return getDeleteMessage([...pathParts, node.key]);
       case types.changed:
-        return getChangeMessage(node.key, node.value, node.newValue, keyPrefix);
+        return getChangeMessage(node.value, node.newValue, [...pathParts, node.key]);
       default:
         if (node.children !== undefined) {
-          return buildLines(node.children, `${node.key}.`);
+          return buildLines(node.children, [...pathParts, node.key]);
         }
         return [];
     }
@@ -37,6 +36,6 @@ const buildLines = (meta, keyPrefix = '') => {
   return lines;
 };
 
-const plainFormatter = (meta) => buildLines(meta).join('\n');
+const plainFormatter = (diff) => buildLines(diff).join('\n');
 
 export default plainFormatter;
