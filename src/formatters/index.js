@@ -4,7 +4,7 @@ import plainFormatter from './plain.js';
 const format = (diff, type) => {
   switch (type) {
     case 'json':
-      return diff;
+      return JSON.stringify(diff, null, 2);
     case 'plain':
       return plainFormatter(diff);
     default:

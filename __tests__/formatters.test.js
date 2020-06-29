@@ -20,9 +20,9 @@ describe('output formatting', () => {
   });
 
   test('json', () => {
-    const out = JSON.parse(readFile('simpleFileOut.json'));
+    const out = readFile('simpleFileOut.json');
 
     const result = genDiff(getFixturePath('simpleFile1.json'), getFixturePath('simpleFile2.json'), 'json');
-    expect(result).toEqual(out);
+    expect(result).toBe(out);
   });
 });
