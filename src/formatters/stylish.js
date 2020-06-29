@@ -12,11 +12,8 @@ const formatValue = (value, depth) => {
     return `${value}`;
   }
 
-  const keys = Object.keys(value);
-  const lines = keys.map(
-    // eslint-disable-next-line no-use-before-define
-    (objKey) => notModifiedMeta({ key: objKey, value: value[objKey] }, depth + 2),
-  );
+  const lines = Object.entries(value)
+    .map(([key, innerValue]) => `${padding(depth + 2)}    ${key}: ${formatValue(innerValue, depth + 2)}`);
 
   return `{\n${lines.join('\n')}\n${padding(depth + 2)}}`;
 };
