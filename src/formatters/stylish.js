@@ -4,45 +4,52 @@ import types from '../types.js';
 const { isObject } = lodash;
 
 const TAB = '  ';
-const CHANGE_SEPARATORS = {
-  added: '+ ',
-  deleted: '- ',
-  notModified: '  ',
-};
 
-const formatLine = (key, value, separator, depth) => {
+const padding = (depth) => TAB.repeat(depth);
+
+const formatValue = (value, depth) => {
   if (!isObject(value)) {
-    return `${TAB.repeat(depth)}${separator}${key}: ${value}`;
+    return `${value}`;
   }
 
   const keys = Object.keys(value);
   const lines = keys.map(
-    (objKey) => formatLine(objKey, value[objKey], CHANGE_SEPARATORS.notModified, depth + 1),
+    // eslint-disable-next-line no-use-before-define
+    (objKey) => notModifiedMeta({ key: objKey, value: value[objKey] }, depth + 2),
   );
 
-  return `${TAB.repeat(depth)}${separator}${key}: {\n${lines.join('\n')}\n${TAB.repeat(depth)}${CHANGE_SEPARATORS.notModified}}`;
+  return `{\n${lines.join('\n')}\n${padding(depth + 2)}}`;
 };
 
-const stylishFormatter = (meta, depth = 1) => {
-  const lines = meta.flatMap((node) => {
-    switch (node.type) {
-      case types.added:
-        return formatLine(node.key, node.value, CHANGE_SEPARATORS.added, depth);
-      case types.deleted:
-        return formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth);
-      case types.changed:
-        return [
-          formatLine(node.key, node.value, CHANGE_SEPARATORS.deleted, depth),
-          formatLine(node.key, node.newValue, CHANGE_SEPARATORS.added, depth),
-        ];
-      default:
-        return node.children === undefined
-          ? formatLine(node.key, node.value, CHANGE_SEPARATORS.notModified, depth)
-          : `${TAB.repeat(depth)}${CHANGE_SEPARATORS.notModified}${node.key}: ${stylishFormatter(node.children, depth + 1)}`;
-    }
-  });
+const notModifiedMeta = (node, depth) => `${padding(depth)}    ${node.key}: ${formatValue(node.value, depth)}`;
+const addedMeta = (node, depth) => `${padding(depth)}  + ${node.key}: ${formatValue(node.value, depth)}`;
+const deletedMeta = (node, depth) => `${padding(depth)}  - ${node.key}: ${formatValue(node.value, depth)}`;
+const changedMeta = (node, depth) => [
+  `${padding(depth)}  - ${node.key}: ${formatValue(node.value, depth)}`,
+  `${padding(depth)}  + ${node.key}: ${formatValue(node.newValue, depth)}`,
+];
 
-  return `{\n${lines.join('\n')}\n${TAB.repeat(depth - 1)}${TAB.repeat(depth - 1 ? 1 : 0)}}`;
+const stylishFormatter = (diff) => {
+  const iter = (children, depth) => {
+    const lines = children.flatMap((node) => {
+      switch (node.type) {
+        case types.added:
+          return addedMeta(node, depth);
+        case types.deleted:
+          return deletedMeta(node, depth);
+        case types.changed:
+          return changedMeta(node, depth);
+        default:
+          return node.children === undefined
+            ? notModifiedMeta(node, depth)
+            : `${padding(depth)}    ${node.key}: ${iter(node.children, depth + 2)}`;
+      }
+    });
+
+    return `{\n${lines.join('\n')}\n${padding(depth)}}`;
+  };
+
+  return iter(diff, 0);
 };
 
 export default stylishFormatter;
