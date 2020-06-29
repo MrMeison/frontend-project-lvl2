@@ -2,9 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import lodash from 'lodash';
 import types from './src/types.js';
-import parsers from './src/parsers/index.js';
-
-import formatters from './src/formatters/index.js';
+import parse from './src/parsers/index.js';
+import format from './src/formatters/index.js';
 
 const { has, union, isObject } = lodash;
 
@@ -56,38 +55,14 @@ const comparer = (obj1, obj2) => {
 
 const readFile = (pathToFile) => fs.readFileSync(path.resolve(pathToFile), 'utf-8');
 
-const gendiff = (pathToFile1, pathToFile2, format = 'stylish') => {
-  const extension = path.extname(pathToFile1);
-  const fileContent1 = readFile(pathToFile1);
-  const fileContent2 = readFile(pathToFile2);
+const getFileType = (pathToFile) => path.extname(pathToFile).slice(1);
 
-  let parsedContent1;
-  let parsedContent2;
+const getParsedData = (pathToFile) => parse(readFile(pathToFile), getFileType(pathToFile));
 
-  switch (extension) {
-    case '.yml':
-      parsedContent1 = parsers.yml(fileContent1);
-      parsedContent2 = parsers.yml(fileContent2);
-      break;
-    case '.ini':
-      parsedContent1 = parsers.ini(fileContent1);
-      parsedContent2 = parsers.ini(fileContent2);
-      break;
-    default:
-      parsedContent1 = parsers.json(fileContent1);
-      parsedContent2 = parsers.json(fileContent2);
-  }
+const gendiff = (pathToFile1, pathToFile2, formatName = 'stylish') => {
+  const diff = comparer(getParsedData(pathToFile1), getParsedData(pathToFile2));
 
-  const diffMeta = comparer(parsedContent1, parsedContent2);
-
-  switch (format) {
-    case 'json':
-      return diffMeta;
-    case 'plain':
-      return formatters.plain(diffMeta);
-    default:
-      return formatters.stylish(diffMeta);
-  }
+  return format(diff, formatName);
 };
 
 export default gendiff;
