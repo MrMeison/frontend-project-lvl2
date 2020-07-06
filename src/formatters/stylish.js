@@ -26,7 +26,7 @@ const changedMeta = (node, depth) => [
   `${padding(depth)}  + ${node.key}: ${formatValue(node.newValue, depth)}`,
 ];
 
-const stylishFormatter = (diff) => {
+const formatStylish = (diff) => {
   const iter = (children, depth) => {
     const lines = children.flatMap((node) => {
       switch (node.type) {
@@ -49,4 +49,4 @@ const stylishFormatter = (diff) => {
   return iter(diff, 0);
 };
 
-export default stylishFormatter;
+export default formatStylish;

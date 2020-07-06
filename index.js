@@ -24,7 +24,7 @@ const getChangedMeta = (key, value, newValue) => ({
   newValue,
 });
 
-const comparer = (obj1, obj2) => {
+const compare = (obj1, obj2) => {
   const allKeys = union(Object.keys(obj1), Object.keys(obj2));
 
   const result = allKeys.map((key) => {
@@ -39,7 +39,7 @@ const comparer = (obj1, obj2) => {
     if (isObject(obj1[key]) && isObject(obj2[key])) {
       return {
         ...getNotModifiedMeta(key),
-        children: comparer(obj1[key], obj2[key]),
+        children: compare(obj1[key], obj2[key]),
       };
     }
 
@@ -60,7 +60,7 @@ const getFileType = (pathToFile) => path.extname(pathToFile).slice(1);
 const getParsedData = (pathToFile) => parse(readFile(pathToFile), getFileType(pathToFile));
 
 const gendiff = (pathToFile1, pathToFile2, formatName = 'stylish') => {
-  const diff = comparer(getParsedData(pathToFile1), getParsedData(pathToFile2));
+  const diff = compare(getParsedData(pathToFile1), getParsedData(pathToFile2));
 
   return format(diff, formatName);
 };

@@ -36,6 +36,6 @@ const buildLines = (meta, pathParts = []) => {
   return lines;
 };
 
-const plainFormatter = (diff) => buildLines(diff).join('\n');
+const formatPlain = (diff) => buildLines(diff).join('\n');
 
-export default plainFormatter;
+export default formatPlain;
