@@ -11,30 +11,17 @@ const formatValue = (value) => {
   return String(value);
 };
 
-const getChangeMessage = (value, newValue, pathParts) => `Property '${pathParts.join('.')}' was changed from ${formatValue(value)} to ${formatValue(newValue)}`;
-
-const getAddMessage = (value, pathParts) => `Property '${pathParts.join('.')}' was added with value: ${formatValue(value)}`;
-
-const getDeleteMessage = (pathParts) => `Property '${pathParts.join('.')}' was deleted`;
-
-const buildLines = (meta, pathParts = []) => {
-  const lines = meta.flatMap((node) => {
-    switch (node.type) {
-      case types.added:
-        return getAddMessage(node.value, [...pathParts, node.key]);
-      case types.deleted:
-        return getDeleteMessage([...pathParts, node.key]);
-      case types.changed:
-        return getChangeMessage(node.value, node.newValue, [...pathParts, node.key]);
-      default:
-        if (node.children !== undefined) {
-          return buildLines(node.children, [...pathParts, node.key]);
-        }
-        return [];
-    }
-  });
-  return lines;
+const outputMapping = {
+  [types.added]: (node, pathParts) => `Property '${pathParts.join('.')}' was added with value: ${formatValue(node.value)}`,
+  [types.changed]: (node, pathParts) => `Property '${pathParts.join('.')}' was changed from ${formatValue(node.value)} to ${formatValue(node.newValue)}`,
+  [types.deleted]: (node, pathParts) => `Property '${pathParts.join('.')}' was deleted`,
+  [types.nested]: (node, pathParts, iter) => iter(node.children, pathParts),
+  [types.notModified]: () => [],
 };
+
+const buildLines = (meta, pathParts = []) => meta.flatMap(
+  (node) => outputMapping[node.type](node, [...pathParts, node.key], buildLines),
+);
 
 const formatPlain = (diff) => buildLines(diff).join('\n');
 
