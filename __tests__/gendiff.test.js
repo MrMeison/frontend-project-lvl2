@@ -7,22 +7,29 @@ const getFixturePath = (filename) => path.join(process.cwd(), '__fixtures__', fi
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 describe('gendiff', () => {
+  let filePath1;
+  let filePath2;
+
+  beforeAll(() => {
+    filePath1 = getFixturePath('complexFile1.json');
+    filePath2 = getFixturePath('complexFile2.json');
+  });
+
   test('stylish', () => {
-    const result = genDiff(getFixturePath('complexFile1.json'), getFixturePath('complexFile2.json'), 'stylish');
+    const result = genDiff(filePath1, filePath2, 'stylish');
     const out = readFile('complexFileOutStylish.txt');
     expect(result.trim()).toBe(out);
   });
 
   test('plain', () => {
-    const result = genDiff(getFixturePath('complexFile1.json'), getFixturePath('complexFile2.json'), 'plain');
+    const result = genDiff(filePath1, filePath2, 'plain');
     const out = readFile('complexFileOutPlain.txt');
     expect(result.trim()).toBe(out);
   });
 
   test('json', () => {
-    const out = readFile('simpleFileOut.json');
-
-    const result = genDiff(getFixturePath('simpleFile1.json'), getFixturePath('simpleFile2.json'), 'json');
-    expect(result).toBe(out);
+    const result = JSON.parse(genDiff(filePath1, filePath2, 'json'));
+    const out = JSON.parse(readFile('complexFileOut.json'));
+    expect(result).toEqual(out);
   });
 });
