@@ -13,7 +13,7 @@ const formatValue = (value) => {
 
 const outputMapping = {
   [types.added]: (node, pathParts) => `Property '${pathParts.join('.')}' was added with value: ${formatValue(node.value)}`,
-  [types.changed]: (node, pathParts) => `Property '${pathParts.join('.')}' was changed from ${formatValue(node.value)} to ${formatValue(node.newValue)}`,
+  [types.changed]: (node, pathParts) => `Property '${pathParts.join('.')}' was changed from ${formatValue(node.oldValue)} to ${formatValue(node.newValue)}`,
   [types.deleted]: (node, pathParts) => `Property '${pathParts.join('.')}' was deleted`,
   [types.nested]: (node, pathParts, iter) => iter(node.children, pathParts),
   [types.notModified]: () => [],

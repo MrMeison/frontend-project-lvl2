@@ -16,7 +16,7 @@
         {
           "type": "changed",
           "key": "setting3",
-          "value": {
+          "oldValue": {
             "key": "value"
           },
           "newValue": true
@@ -68,13 +68,13 @@
         {
           "type": "changed",
           "key": "baz",
-          "value": "bars",
+          "oldValue": "bars",
           "newValue": "bas"
         },
         {
           "type": "changed",
           "key": "nest",
-          "value": "str",
+          "oldValue": "str",
           "newValue": {
             "key": "value"
           }

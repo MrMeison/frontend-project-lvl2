@@ -39,7 +39,7 @@ const compare = (obj1, obj2) => {
       return {
         type: types.changed,
         key,
-        value: obj1[key],
+        oldValue: obj1[key],
         newValue: obj2[key],
       };
     }

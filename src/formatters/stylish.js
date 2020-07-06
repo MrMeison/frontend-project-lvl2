@@ -21,7 +21,7 @@ const formatValue = (value, depth) => {
 const outputMapping = {
   [types.added]: (node, depth) => `${padding(depth)}  + ${node.key}: ${formatValue(node.value, depth)}`,
   [types.changed]: (node, depth) => [
-    `${padding(depth)}  - ${node.key}: ${formatValue(node.value, depth)}`,
+    `${padding(depth)}  - ${node.key}: ${formatValue(node.oldValue, depth)}`,
     `${padding(depth)}  + ${node.key}: ${formatValue(node.newValue, depth)}`,
   ],
   [types.deleted]: (node, depth) => `${padding(depth)}  - ${node.key}: ${formatValue(node.value, depth)}`,
