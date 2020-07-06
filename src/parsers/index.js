@@ -1,16 +1,12 @@
-import json from './json.js';
-import ini from './ini.js';
-import yml from './yml.js';
+import ini from 'ini';
+import yaml from 'js-yaml';
 
-const parse = (content, type) => {
-  switch (type) {
-    case 'ini':
-      return ini(content);
-    case 'yml':
-      return yml(content);
-    default:
-      return json(content);
-  }
+const mapParsers = {
+  ini: ini.parse,
+  yml: yaml.safeLoad,
+  json: JSON.parse,
 };
+
+const parse = (content, type) => mapParsers[type](content);
 
 export default parse;
